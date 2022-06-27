@@ -16,8 +16,9 @@ const User = require('./models/user');
 const propertyRoutes = require('./routes/properties') ;
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
-
-mongoose.connect('mongodb://localhost:27017/prop-dot', {
+const MongoDBStore =  require('connect-mongo') ;
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/prop-dot'
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     //useCreateIndex: true,
     useUnifiedTopology: true,
@@ -39,8 +40,21 @@ app.use(express.urlencoded({extended : true})); // to parce the req body
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname,'public')));
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+const store = MongoDBStore.create({
+    mongoUrl: dbUrl,
+    secret,
+    touchAfter: 24 * 60 * 60
+});
+
+store.on("error", function (e) {
+    console.log("SESSION STORE ERROR", e)
+})
+
 const sessionConfig ={
-    secret : 'thisshouldbebettersecret',
+    store,
+    name: 'session',
+    secret,
     resave : false ,
     saveUninitialized: true,
     cookie : {
@@ -83,6 +97,7 @@ app.use((err, req, res, next) => {
     const { statusCode =500 , message ='Something Got Wrong!!'} = err;
     res.render('error',{err});
 })
-app.listen(3000, ()=>{
-    console.log('listening on port 3000!!');
+const port = process.env.PORT || 3000;
+app.listen(port, ()=>{
+    console.log(`listening on port ${port}!!`);
 })
