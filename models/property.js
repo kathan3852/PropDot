@@ -40,7 +40,7 @@ const PropertySchema = new Schema({
 },options)
 
 PropertySchema.virtual('properties.popUpMarkup').get(function () {
-    return `<strong><a href="/propertiess/${this._id}">${this.title}</a><strong>
+    return `<strong><a href="/properties/${this._id}">${this.title}</a><strong>
     <p>${this.description.substring(0, 20)}...</p>`
 });
 
