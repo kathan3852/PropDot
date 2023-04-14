@@ -17,7 +17,7 @@ const propertyRoutes = require('./routes/properties') ;
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 const MongoDBStore =  require('connect-mongo') ;
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/prop-dot'
+const dbUrl =  process.env.DB_URL || 'mongodb://127.0.0.1:27017/prop-dot'
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     //useCreateIndex: true,
